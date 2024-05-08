@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Fraud Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        input[type="text"], input[type="submit"] {
+            padding: 10px;
+            margin-top: 5px;
+        }
+        label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Credit Card Fraud Detection</h1>
+    <p>{{ model_loaded }}</p>
+    <form action="/" method="post">
+        <label for="features">Enter features separated by commas:</label><br>
+        <input type="text" id="features" name="features" size="50" placeholder="e.g., 0.1,0.2,0.3,..."><br><br>
+        <input type="submit" value="Predict">
+    </form>
+    {% if prediction %}
+        <h2>Prediction: {{ prediction }}</h2>
+    {% endif %}
+</body>
+</html>
