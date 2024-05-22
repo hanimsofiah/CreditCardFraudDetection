@@ -29,14 +29,14 @@
         </div>
         <form action="/" method="post" class="mb-3">
             <div class="mb-3">
-                <label for="transactions" class="form-label">Enter Transactions V1-V28 (separated by commas):</label>
+                <label for="transactions" class="form-label">Enter Feature Values V1-V28 (separated by commas):</label>
                 <textarea id="transactions" name="transactions" class="form-control textarea" required>{{ transactions }}</textarea>
             </div>
             <div class="mb-3">
-                <label for="amount" class="form-label">Enter Amount</label>
+                <label for="amount" class="form-label">Enter Amount:</label>
                 <input type="number" id="amount" name="amount" class="form-control" step="0.01" required value="{{ amount }}">
             </div>
-            <button type="submit" class="btn btn-primary">Predict</button>
+            <button type="submit" class="btn btn-secondary">Predict</button>
         </form>
         {% if prediction %}
         <div class="alert {{ 'alert-danger' if prediction == 'Fraud' else 'alert-success' }}" style="font-size: 20px; font-weight: bold;">
