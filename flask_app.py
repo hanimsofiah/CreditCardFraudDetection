@@ -9,7 +9,7 @@ app = Flask(__name__)
 # Attempt to load the model and scaler
 try:
     model = pickle.load(open('development/xgboost/model.pkl', 'rb'))
-    scaler = pickle.load(open('development/xgboost/scale.pkl', 'rb'))
+    scaler = pickle.load(open('development/xgboost/scaler.pkl', 'rb'))
     model_loaded = "Model Loaded Successfully"
 except Exception as e:
     model = None
