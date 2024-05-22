@@ -6,7 +6,7 @@ import os
 app = Flask(__name__)
 
 try:
-    model = pickle.load(open('development/testing/model.pkl', 'rb'))
+    model = pickle.load(open('development/xgboost/model.pkl', 'rb'))
 except Exception as e:
     model = None
     model_loaded = f"Failed to load model: {e}"
@@ -20,7 +20,7 @@ def home():
             input_string = request.form['features']
             feature_list = [float(x) for x in input_string.split(',')]
 
-            columns = ['Time', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 
+            columns = ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 
                        'V10', 'V11', 'V12', 'V13', 'V14', 'V15', 'V16', 'V17', 'V18', 
                        'V19', 'V20', 'V21', 'V22', 'V23', 'V24', 'V25', 'V26', 'V27', 'V28', 'Amount']
 
