@@ -56,11 +56,11 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 """
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, flash
 import pandas as pd
 import pickle
 import os
-import xgboost as xgb  # Ensure xgboost is imported
+import xgboost as xgb
 
 app = Flask(__name__)
 
@@ -114,6 +114,31 @@ def home():
 
     return render_template('index.html', prediction=result, confidence=confidence, model_loaded=model_loaded, 
                            feature_values=feature_values, amount=amount)
+
+@app.route('/bulk_upload', methods=['GET', 'POST'])
+def bulk_upload():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and file.filename.endswith('.csv'):
+            data = pd.read_csv(file)
+            
+            # Ensure the DataFrame matches the model's expected features
+            features_df = data  # Assuming the data already includes 'scaled_amount' as the last column correctly
+            
+            dmatrix = xgb.DMatrix(features_df)
+            predictions = model.predict(dmatrix)
+            
+            # Adding predictions to DataFrame
+            data['Prediction'] = ['Fraud' if pred > 0.5 else 'Non-Fraud' for pred in predictions]
+            
+            # Calculate statistics for visualization
+            fraud_count = sum(pred > 0.5 for pred in predictions)
+            non_fraud_count = len(predictions) - fraud_count
+            
+            # Convert DataFrame to HTML, ensure HTML is not escaped
+            html_table = data.to_html(classes='table table-striped', index=False, escape=False)
+            return render_template('results.html', table=html_table, fraud_count=fraud_count, non_fraud_count=non_fraud_count)
+    return render_template('bulk_upload.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
