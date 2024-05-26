@@ -6,20 +6,102 @@
     <title>Credit Card Fraud Detection</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     <style>
-        .container {
-            margin-top: 40px;
+        .feature-block {
+            border: 2px; /* Using a stronger blue border */
+            padding: 10px; /* Padding around each feature */
+            margin-bottom: 15px; /* Space between rows */
+           background-color: rgb(255, 255, 255);
+            border-radius: 10px; /* Rounded corners for the blocks */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for 3D effect */
+            transition: all 0.3s ease; /* Smooth transition for hover effects */
         }
-        .result-box {
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid;
-            border-radius: 5px;
+    
+        .feature-block:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Enhanced shadow on hover */
+            transform: translateY(-2px); /* Slight lift effect on hover */
         }
-        .textarea {
-            height: 150px;
+    
+        .col-seventh {
+            width: 14.2857143%; /* 100 / 7 */
+            float: left;
+            padding: 0 15px; /* Increase side padding */
+            box-sizing: border-box; /* Includes padding in the width */
+            margin-bottom: 10px; /* Add space below each feature block */
+        }
+
+        /* General styling for the slider */
+        .form-range {
+            width: 100%;
+            height: 8px;
+            background: #6c757d; /* Updated color for the slider track */
+            border-radius: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        /* Styling for the slider thumb for WebKit browsers like Chrome, Safari */
+        .form-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #6c757d; /* Updated color for the slider thumb */
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: -6px; /* Corrects vertical alignment of the thumb */
+        }
+
+        /* Styling for the slider thumb for Mozilla Firefox */
+        .form-range::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #6c757d; /* Consistent color for Firefox */
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Styling for the slider track for WebKit browsers */
+.form-range::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    background: #6c757d; /* Sets the track color */
+    border-radius: 4px; /* Optional: rounded corners for the track */
+    -webkit-appearance: none; /* Necessary to disable default styling */
+}
+
+/* Styling for the slider track for Mozilla Firefox */
+.form-range::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    background: #6c757d;
+    border-radius: 4px;
+    -moz-appearance: none; /* Necessary to disable default styling */
+}
+
+/* Ensure the track is also styled for Microsoft Edge */
+.form-range::-ms-track {
+    width: 100%;
+    height: 8px;
+    background: #6c757d;
+    border-radius: 4px;
+    border: none; /* Remove default border styles */
+}
+
+/* For the thumb in Microsoft Edge */
+.form-range::-ms-thumb {
+    background: #6c757d; /* Ensure thumb color matches track */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+}
+
+        .form-control {
+            margin-top: 5px; /* Space between slider and input box */
         }
     </style>
+    
 </head>
 <body>
     <div class="container">
@@ -27,27 +109,113 @@
         <div class="alert {{ 'alert-success' if 'Successfully' in model_loaded else 'alert-danger' }}">
             {{ model_loaded }}
         </div>
-        <form action="/" method="post" class="mb-3">
-            <div class="mb-3">
+        <form action="/" method="post" class="mb-3" novalidate>
+            <!--<div class="mb-3">
                 <label for="transactions" class="form-label">Enter Feature Values V1-V28 (separated by commas):</label>
                 <textarea id="transactions" name="transactions" class="form-control textarea" required>{{ transactions }}</textarea>
+            </div>-->
+            <div class="card">
+                <!-- Trigger Button and Modal -->
+                <div class="card-header">
+                    Enter Feature Values V1-V28:
+                    <button type="button" class="btn btn-secondary btn-sm" style="float:right;" data-bs-toggle="modal" data-bs-target="#featureModal">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="featureModal" tabindex="-1" aria-labelledby="featureModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="featureModalLabel">Enter Feature Values V1-V28 (separated by commas):</h5>
+                        
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="featureValues" class="form-control textarea" placeholder="V1-V28 (separated by commas)" style="height: 200px;"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" onclick="fillValues()">Save</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        {% for i in range(1, 29) %}
+                        <div class="col-seventh feature-block">
+                            <label for="V{{i}}" class="form-label">V{{i}}</label>
+                            <!-- Assuming this structure is inside a loop that iterates through each V1 to V28 -->
+                            <input type="range" class="form-range" min="-20" max="20" step="0.01" id="sliderV{{i}}" name="V{{i}}" value="{{ feature_values['V' ~ i] }}" oninput="syncValue(this.value, 'textV{{i}}');">
+                            <input type="number" step="any" id="textV{{i}}" name="V{{i}}" class="form-control" value="{{ feature_values['V' ~ i] }}" oninput="syncValue(this.value, 'sliderV{{i}}', true);">
+
+                            <br>
+                        </div>
+                        {% if i % 7 == 0 %}
+                            </div><div class="row"> 
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
             <div class="mb-3">
                 <label for="amount" class="form-label">Enter Amount:</label>
                 <input type="number" id="amount" name="amount" class="form-control" step="0.01" required value="{{ amount }}">
+                
             </div>
             <button type="submit" class="btn btn-secondary">Predict</button>
         </form>
         {% if prediction %}
         <div class="alert {{ 'alert-danger' if prediction == 'Fraud' else 'alert-success' }}" style="font-size: 20px; font-weight: bold;">
-            Prediction: {{ prediction }} 
+            Prediction: {{ prediction }}
             <i class="{{ 'fas fa-times' if prediction == 'Fraud' else 'fas fa-check' }}"></i>
             <br>
             Confidence: {{ confidence }}
         </div>
         {% endif %}
     </div>
+    <script>
+    function syncValue(val, targetId, isText = false) {
+        document.getElementById(targetId).value = val;
+        if (isText && (parseFloat(val) || parseFloat(val) === 0)) {  // Check for numeric value including negative
+            document.getElementById(targetId.replace('text', 'slider')).value = parseFloat(val);
+        }
+    }
+    function fillValues() {
+        var values = document.getElementById('featureValues').value.split(',');
+        if (values.length === 28) {
+            var allValid = true;
+            for (let i = 0; i < values.length; i++) {
+                if (isNaN(parseFloat(values[i]))) {
+                    allValid = false;
+                    alert('Invalid input at position ' + (i + 1));
+                    break;
+                }
+            }
+            if (allValid) {
+                values.forEach((value, index) => {
+                    var preciseValue = parseFloat(value.trim());
+                    var inputField = document.getElementById('textV' + (index + 1));
+                    var sliderField = document.getElementById('sliderV' + (index + 1));
+                    inputField.value = preciseValue; // Direct assignment
+                    sliderField.value = preciseValue; // Update slider
+                });
+                var modalElement = document.getElementById('featureModal');
+                var modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+            }
+        } else {
+            alert('Please enter exactly 28 numeric values, separated by commas.');
+        }
+    }
+
+
+
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+   
 </body>
 </html>
