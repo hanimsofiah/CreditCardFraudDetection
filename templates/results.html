@@ -12,13 +12,37 @@
 
     <style>
         
-        .dataTables_wrapper {
-            width: 100%; /* Ensures the DataTable does not exceed the width of its container */
-            margin: 0 auto;
-        }
+        
         .navbar-brand i {
             color: rgb(236, 236, 138); /* Set icon color to yellow */
         }
+        body, html {
+            width: 100%;
+            overflow-x: hidden; /* Hide horizontal overflow at the body level */
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 100%; /* Ensure the container fits within the viewport width */
+            overflow-x: hidden; /* Prevent horizontal scrolling on the container */
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .dataTables_wrapper {
+            overflow-x: auto; /* Allows horizontal scroll only within the DataTable */
+            width: 100%;
+        }
+
+        /* Ensures that all elements inside the DataTable consider the border and padding in their width calculation */
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+</style>
+
     </style>
     
 </head>
@@ -82,11 +106,12 @@
 <script>
     $(document).ready(function() {
         $('#resultsTable').DataTable({
-            responsive: true, // Make DataTables responsive
-            "pagingType": "full_numbers",
-            "lengthChange": false,
-            "pageLength": 10,
-            "autoWidth": false // Disable automatic column width calculation
+            responsive: true, // Optional: Enable responsive design
+            scrollX: true, // Enable horizontal scrolling
+            pagingType: "full_numbers",
+            pageLength: 20, // Set the number of rows per page
+            autoWidth: false, // Prevent automatic column width calculation
+            lengthChange: false 
         });
     });
 </script>
